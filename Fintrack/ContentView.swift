@@ -6,16 +6,49 @@
 //
 
 import SwiftUI
+import FirebaseAuth
 
 struct ContentView: View {
+    @State private var isSignedOut: Bool = false
+
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        Group {
+            if isSignedOut {
+                LogInView()
+            } else {
+                ZStack {
+                    LinearGradient(gradient: Gradient(colors : [.gray, .green]),
+                                  startPoint: .topLeading,
+                                  endPoint: .bottomTrailing)
+                        .edgesIgnoringSafeArea(.all)
+                    Spacer()
+                    VStack {
+                        
+                        Button(action: {
+                            signOut()
+                        }) {
+                            Text("Sign Out")
+                                .fontWeight(.semibold)
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(Color.white)
+                                .foregroundColor(.black)
+                                .cornerRadius(10)
+                        }
+                    }
+                    .padding()
+                }
+            }
         }
-        .padding()
+    }
+    
+    func signOut() {
+        do {
+            try AuthService.shared.logout()
+            isSignedOut = true
+        } catch {
+            print("Already logged out")
+        }
     }
 }
 
